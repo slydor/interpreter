@@ -8,11 +8,18 @@ export const parse = (text: string, debug: boolean = false) => {
         const { results } = parser;
         if (results.length === 1) {
             return results[0];
-        } else if (debug && results.length === 0) {
+        }
+
+        if (results.length > 1) {
+            if (debug) {
+                console.log(`grammar is ambiguous for text [${text}]`);
+                console.log(JSON.stringify(results));
+            }
+            return results[0];
+        }
+
+        if (debug && results.length === 0) {
             console.log(`no parsing result for text [${text}]`);
-        } else if (debug && results.length > 1) {
-            console.log(`parsing not unique for text [${text}]`);
-            console.log(`[${results.join(',')}]`);
         }
     } catch (error) {
         if (debug) {

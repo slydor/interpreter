@@ -3,6 +3,15 @@ export type Node = {
     type: NodeType;
 };
 
+export type AndGroup = Node & {
+    left: AndGroup | OrGroup | Statement;
+    right: AndGroup | OrGroup | Statement;
+};
+export type OrGroup = Node & {
+    left: AndGroup | OrGroup | Statement;
+    right: AndGroup | OrGroup | Statement;
+};
+
 export type StatementProperty = 'Name' | 'Nr' | 'Status' | 'Ready';
 export type StatementRelation = '==' | '!=' | '<' | '<=' | '>' | '>=';
 export type StatementValue = string | number | boolean;
