@@ -155,7 +155,7 @@ export var ParserRules: NearleyRule[] = [
     {"name": "or", "symbols": ["or", "or$string$1", "and"], "postprocess": ([left, or, right]) => ({left, right, type: "or"})},
     {"name": "or", "symbols": ["and"], "postprocess": id},
     {"name": "and$string$1", "symbols": [{"literal":"a"}, {"literal":"n"}, {"literal":"d"}], "postprocess": (d) => d.join('')},
-    {"name": "and", "symbols": ["and", "and$string$1", "and"], "postprocess": ([left, and, right]) => ({left, right, type: "and"})},
+    {"name": "and", "symbols": ["and", "and$string$1", "statement"], "postprocess": ([left, and, right]) => ({left, right, type: "and"})},
     {"name": "and", "symbols": ["statement"], "postprocess": id},
     {"name": "statement", "symbols": ["_", "property", "_", "relation", "_", "value", "_"], "postprocess": 
         
