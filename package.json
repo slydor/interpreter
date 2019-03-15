@@ -1,0 +1,33 @@
+{
+    "name": "interpreter",
+    "version": "1.0.0",
+    "main": "index.ts",
+    "repository": "git@github.com:slydor/interpreter.git",
+    "author": "slydor <aprange@gmx.net>",
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+        "nearley": "^2.16.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^24.0.11",
+        "jest": "^24.5.0",
+        "ts-jest": "^24.0.0",
+        "typescript": "^3.3.3333"
+    },
+    "jest": {
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js"
+        ],
+        "transform": {
+            "\\.(ts|tsx)$": "ts-jest"
+        },
+        "testRegex": ".*\\.test\\.(ts|tsx|js)$"
+    },
+    "scripts": {
+        "compile": "yarn nearleyc ./grammar/rule.ne -o ./grammar/rule.js ",
+        "test-grammar": "nearley-test ./grammar/rule.js -i"
+    }
+}
