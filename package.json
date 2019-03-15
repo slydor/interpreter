@@ -27,7 +27,7 @@
         "testRegex": ".*\\.test\\.(ts|tsx|js)$"
     },
     "scripts": {
-        "compile": "yarn nearleyc ./grammar/rule.ne -o ./grammar/rule.js ",
+        "compile": "yarn nearleyc ./grammar/rule.ne -o ./grammar/rule.ts ",
         "test-grammar": "nearley-test ./grammar/rule.js -i"
     }
 }
