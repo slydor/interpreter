@@ -5,6 +5,7 @@
 function id(d: any[]): any { return d[0]; }
 
 
+// not used
 var propertyValue = function(d) {
     return {prop: d, type: "propertyValue"}
 }
@@ -149,7 +150,13 @@ export var ParserRules: NearleyRule[] = [
             return d.join("");
         }
         },
-    {"name": "rule", "symbols": ["statement"], "postprocess": id},
+    {"name": "rule", "symbols": ["or"], "postprocess": id},
+    {"name": "or$string$1", "symbols": [{"literal":"o"}, {"literal":"r"}], "postprocess": (d) => d.join('')},
+    {"name": "or", "symbols": ["or", "or$string$1", "and"], "postprocess": ([left, or, right]) => ({left, right, type: "or"})},
+    {"name": "or", "symbols": ["and"], "postprocess": id},
+    {"name": "and$string$1", "symbols": [{"literal":"a"}, {"literal":"n"}, {"literal":"d"}], "postprocess": (d) => d.join('')},
+    {"name": "and", "symbols": ["and", "and$string$1", "and"], "postprocess": ([left, and, right]) => ({left, right, type: "and"})},
+    {"name": "and", "symbols": ["statement"], "postprocess": id},
     {"name": "statement", "symbols": ["_", "property", "_", "relation", "_", "value", "_"], "postprocess": 
         
         ([w0, prop, w1, rel, w2, value, w3]) => ({prop, rel, value, type: "statement", arity: "binary"})

@@ -16,6 +16,9 @@
         "typescript": "^3.3.3333"
     },
     "jest": {
+        "globals": {
+            "ts-jest": {}
+        },
         "moduleFileExtensions": [
             "ts",
             "tsx",

@@ -6,13 +6,19 @@
 
 @{%
 
+// not used
 var propertyValue = function(d) {
     return {prop: d, type: "propertyValue"}
 }
 
 %}
 
-rule -> statement {% id %}
+rule -> or               {% id %}
+# introduce precedence: 'and' before 'or'
+or   -> or "or" and      {% ([left, or, right]) => ({left, right, type: "or"}) %}
+      | and              {% id %}
+and  -> and "and" and    {% ([left, and, right]) => ({left, right, type: "and"}) %}
+      | statement        {% id %}
 
 statement -> _ property _ relation _ value _ {%
 
