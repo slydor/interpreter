@@ -30,7 +30,7 @@
         "testRegex": ".*\\.test\\.(ts|tsx|js)$"
     },
     "scripts": {
-        "compile": "yarn nearleyc ./grammar/rule.ne -o ./grammar/rule.ts ",
-        "test-grammar": "nearley-test ./grammar/rule.js -i"
+        "compile": "nearleyc ./grammar/rule.ne -o ./grammar/rule.ts",
+        "compile2": "nearleyc ./grammar/brackets.ne -o ./grammar/brackets.js"
     }
 }
