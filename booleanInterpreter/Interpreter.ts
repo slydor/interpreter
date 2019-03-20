@@ -42,7 +42,7 @@ export type PropertyValueNode = ASTNodeBase & {
     p: string;
 };
 
-export type InterpretFunction = Function;
+export type InterpretFunction = (params: any[]) => boolean;
 
 export type InterpretParameter = string;
 

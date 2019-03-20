@@ -61,7 +61,7 @@ const create = (node: ASTNode): Interpreter => {
         case 'AND':
         /* fall-through */
         case 'OR': {
-            let func: Function;
+            let func: (params: any[]) => boolean;
             let params = new Array<string>();
 
             const left = create(node.l);
@@ -88,7 +88,7 @@ const create = (node: ASTNode): Interpreter => {
             };
         }
         case 'BINARY': {
-            let func: Function;
+            let func: (params: any[]) => boolean;
             let params = new Array<string>();
             const { bin, l, r } = node;
             const isFstObj = typeof l === 'object';
@@ -113,4 +113,3 @@ const create = (node: ASTNode): Interpreter => {
         }
     }
 };
-
