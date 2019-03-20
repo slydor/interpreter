@@ -1,6 +1,6 @@
 import { Statement } from './Interpreter';
 import { interpretBinaryRelation } from './interpretBinaryRelation';
-import { propertyValues } from '../propertyValues';
+import { propertyValues } from './propertyValues';
 
 export const interpretRelation = (statement: Statement) => {
     switch (statement.arity) {

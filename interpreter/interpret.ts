@@ -1,4 +1,4 @@
-import { parse } from '../grammar/parse';
+import { parse } from '../parser/parse';
 import { Node } from './Interpreter';
 import { interpretRule } from './interpretRule';
 

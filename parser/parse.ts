@@ -1,7 +1,7 @@
 import * as nearley from 'nearley';
-import * as grammar from './brackets';
+import * as grammar from '../grammar/rule';
 
-export const parseBrackets = (
+export const parse = (
     text: string,
     debug: boolean = false,
     print: boolean = false
