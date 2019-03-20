@@ -17,7 +17,7 @@ StatementAtom  -> BinaryExp                        {% id %}
 
 Brackets       -> "(" _ BooleanExp _ ")"           {% ([b0, w0, e, w1, b1]) => e %}
 
-BinaryExp      -> ExpValue _ BinaryRel _ ExpValue  {% ([l, w0, rel, w1, r]) => ({_type: 'BINARY', rel, l, r}) %}
+BinaryExp      -> ExpValue _ BinaryRel _ ExpValue  {% ([l, w0, bin, w1, r]) => ({_type: 'BINARY', bin, l, r}) %}
 
 BinaryRel      -> "=="                             {% id %}
                 | "!="                             {% id %}
@@ -28,6 +28,6 @@ ExpValue       -> PropertyValue                    {% id %}
                 | "true"                           {% (d) => true %}
                 | "false"                          {% (d) => false %}
 
-PropertyValue  -> "main." Property                 {% ([main, p] => ({_type: 'PROPERTY_VALUE', v: p})) %}
+PropertyValue  -> "main." Property                 {% ([main, p]) => ({_type: 'PROPERTY_VALUE', p}) %}
 
 Property       -> [a-zA-Z] [a-zA-Z0-9]:*           {% ([first, rest]) => first + rest.join('') %}
