@@ -2,7 +2,8 @@ import {
     ASTNode,
     ASTNodeType,
     Interpreter,
-    ExpressionValue
+    ExpressionValue,
+    PropertyValueNode
 } from './Interpreter';
 
 /**
@@ -12,6 +13,9 @@ import {
  * therefore they are not stored in the thunk.
  */
 export const createBooleanFromAST = (node: ASTNode): Interpreter => {
+
+    return create(node);
+
     const props = [];
     visit(node, props);
     console.log('visited props', props);
@@ -48,6 +52,42 @@ const visit = (node: ASTNode, visitedProps: Array<string>) => {
             console.log('visit node', node._type, '\n', 'leaf prop', node.p);
             visitedProps.push(node.p);
             break;
+    }
+};
+
+const create = (node: ASTNode): Interpreter => {
+    switch (node._type) {
+        /* case 'AND':
+        case 'OR':
+            console.log('visit node', node._type);
+            visit(node.l, visitedProps);
+            visit(node.r, visitedProps);
+            break; */
+        case 'BINARY':
+            {
+                let func: Function;
+                let params = new Array<string>();
+                const { bin, l, r } = node;
+                const isFstObj = typeof l === 'object';
+                const isSndObj = typeof r === 'object';
+                if (isFstObj && isSndObj) {
+                    func = (p0, p1) => binaryComp[bin](p0, p1);
+                    params.push((l as PropertyValueNode).p);
+                    params.push((r as PropertyValueNode).p);
+                } else if (isFstObj) {
+                    func = p0 => binaryComp[bin](p0, r);
+                    params.push((l as PropertyValueNode).p);
+                } else if (isSndObj) {
+                    func = p0 => binaryComp[bin](l, p0);
+                    params.push((r as PropertyValueNode).p);
+                } else {
+                    func = () => binaryComp[bin](l, r);
+                }
+                return {
+                    func,
+                    params
+                };
+            }
     }
 };
 
