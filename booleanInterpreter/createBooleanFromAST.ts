@@ -1,6 +1,5 @@
 import {
     ASTNode,
-    ASTNodeType,
     Interpreter,
     ExpressionValue,
     PropertyValueNode
@@ -15,36 +14,6 @@ import {
  */
 export const createBooleanFromAST = (node: ASTNode): Interpreter => {
     return create(node);
-};
-
-const visit = (node: ASTNode, visitedProps: Array<string>) => {
-    switch (node._type) {
-        case 'AND':
-        case 'OR':
-            console.log('visit node', node._type);
-            visit(node.l, visitedProps);
-            visit(node.r, visitedProps);
-            break;
-        case 'BINARY':
-            console.log(
-                'visit node',
-                node._type,
-                '\n',
-                'leaf binary',
-                node.bin
-            );
-            if (typeof node.l === 'object') {
-                visit(node.l, visitedProps);
-            }
-            if (typeof node.r === 'object') {
-                visit(node.r, visitedProps);
-            }
-            break;
-        case 'PROPERTY_VALUE':
-            console.log('visit node', node._type, '\n', 'leaf prop', node.p);
-            visitedProps.push(node.p);
-            break;
-    }
 };
 
 const andOrOp = {
@@ -111,5 +80,36 @@ const create = (node: ASTNode): Interpreter => {
                 params
             };
         }
+    }
+};
+
+// simple, unused tree recursion
+const visit = (node: ASTNode, visitedProps: Array<string>) => {
+    switch (node._type) {
+        case 'AND':
+        case 'OR':
+            console.log('visit node', node._type);
+            visit(node.l, visitedProps);
+            visit(node.r, visitedProps);
+            break;
+        case 'BINARY':
+            console.log(
+                'visit node',
+                node._type,
+                '\n',
+                'leaf binary',
+                node.bin
+            );
+            if (typeof node.l === 'object') {
+                visit(node.l, visitedProps);
+            }
+            if (typeof node.r === 'object') {
+                visit(node.r, visitedProps);
+            }
+            break;
+        case 'PROPERTY_VALUE':
+            console.log('visit node', node._type, '\n', 'leaf prop', node.p);
+            visitedProps.push(node.p);
+            break;
     }
 };

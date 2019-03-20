@@ -8,17 +8,17 @@ export type ASTNode = AndNode | OrNode | BinaryNode | PropertyValueNode;
 
 export type AndNode = ASTNodeBase & {
     _type: 'AND';
-    /** right node */
-    l: ASTNode;
     /** left node */
+    l: ASTNode;
+    /** right node */
     r: ASTNode;
 };
 
 export type OrNode = ASTNodeBase & {
     _type: 'OR';
-    /** right node */
-    l: ASTNode;
     /** left node */
+    l: ASTNode;
+    /** right node */
     r: ASTNode;
 };
 
@@ -30,9 +30,9 @@ export type BinaryNode = ASTNodeBase & {
     _type: 'BINARY';
     /** binary relation */
     bin: BinaryType;
-    /** right node */
-    l: ExpressionValue;
     /** left node */
+    l: ExpressionValue;
+    /** right node */
     r: ExpressionValue;
 };
 
