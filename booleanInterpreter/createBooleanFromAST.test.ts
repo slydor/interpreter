@@ -40,8 +40,8 @@ describe('createBooleanFromAST', () => {
             l: { _type: 'PROPERTY_VALUE', p: 'Ready' },
             r: true
         });
-        expect(isReady.func(true)).toBe(true);
-        expect(isReady.func(false)).toBe(false);
+        expect(isReady.func([true])).toBe(true);
+        expect(isReady.func([false])).toBe(false);
         expect(isReady.params).toHaveLength(1);
         expect(isReady.params[0]).toBe('Ready');
     });
@@ -53,8 +53,8 @@ describe('createBooleanFromAST', () => {
             l: 13,
             r: { _type: 'PROPERTY_VALUE', p: 'Status' }
         });
-        expect(equalsThirteen.func(13)).toBe(true);
-        expect(equalsThirteen.func(37)).toBe(false);
+        expect(equalsThirteen.func([13])).toBe(true);
+        expect(equalsThirteen.func([37])).toBe(false);
         expect(equalsThirteen.params).toHaveLength(1);
         expect(equalsThirteen.params[0]).toBe('Status');
     });
@@ -66,15 +66,19 @@ describe('createBooleanFromAST', () => {
             l: { _type: 'PROPERTY_VALUE', p: 'Info' },
             r: { _type: 'PROPERTY_VALUE', p: 'Comment' }
         });
-        expect(equalsThirteen.func('foobar', 'foobar')).toBe(true);
-        expect(equalsThirteen.func('foo', 'bar')).toBe(false);
+        expect(equalsThirteen.func(['foobar', 'foobar'])).toBe(true);
+        expect(equalsThirteen.func(['foo', 'bar'])).toBe(false);
         expect(equalsThirteen.params).toHaveLength(2);
         expect(equalsThirteen.params[0]).toBe('Info');
         expect(equalsThirteen.params[1]).toBe('Comment');
     });
 
-    /* test('TODO', () => {
-        const { func, params } = createBooleanFromAST(example1);
-        expect(func()).toBe(false);
-    }); */
+    test('expect correct parameter list for extended nested nodes', () => {
+        const { params } = createBooleanFromAST(example1);
+        expect(params).toHaveLength(4);
+        expect(params[0]).toBe('Ready');
+        expect(params[1]).toBe('Name');
+        expect(params[2]).toBe('Id');
+        expect(params[3]).toBe('Name');
+    });
 });
