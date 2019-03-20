@@ -7,22 +7,14 @@ import {
 } from './Interpreter';
 
 /**
- * The idea is to create a function thunk A and a list B.
- * B contains all the parameters required for A.
+ * The idea is to create a thunk A and a list B.
+ * A always expects be to called with an array of parameters.
+ * B contains the parameter information required for A.
  * All of B's values might be dynamically resolved,
  * therefore they are not stored in the thunk.
  */
 export const createBooleanFromAST = (node: ASTNode): Interpreter => {
-
     return create(node);
-
-    const props = [];
-    visit(node, props);
-    console.log('visited props', props);
-    return {
-        func: () => false,
-        params: []
-    };
 };
 
 const visit = (node: ASTNode, visitedProps: Array<string>) => {
@@ -55,54 +47,70 @@ const visit = (node: ASTNode, visitedProps: Array<string>) => {
     }
 };
 
-const create = (node: ASTNode): Interpreter => {
-    switch (node._type) {
-        /* case 'AND':
-        case 'OR':
-            console.log('visit node', node._type);
-            visit(node.l, visitedProps);
-            visit(node.r, visitedProps);
-            break; */
-        case 'BINARY':
-            {
-                let func: Function;
-                let params = new Array<string>();
-                const { bin, l, r } = node;
-                const isFstObj = typeof l === 'object';
-                const isSndObj = typeof r === 'object';
-                if (isFstObj && isSndObj) {
-                    func = (p0, p1) => binaryComp[bin](p0, p1);
-                    params.push((l as PropertyValueNode).p);
-                    params.push((r as PropertyValueNode).p);
-                } else if (isFstObj) {
-                    func = p0 => binaryComp[bin](p0, r);
-                    params.push((l as PropertyValueNode).p);
-                } else if (isSndObj) {
-                    func = p0 => binaryComp[bin](l, p0);
-                    params.push((r as PropertyValueNode).p);
-                } else {
-                    func = () => binaryComp[bin](l, r);
-                }
-                return {
-                    func,
-                    params
-                };
-            }
-    }
+const andOrOp = {
+    AND: (l: any, r: any) => l && r,
+    OR: (l: any, r: any) => l || r
 };
-
 const binaryComp = {
     '==': (l: ExpressionValue, r: ExpressionValue) => l === r,
     '!=': (l: ExpressionValue, r: ExpressionValue) => l !== r
 };
 
-const convertNode = (node: ASTNode) => {
+const create = (node: ASTNode): Interpreter => {
     switch (node._type) {
-        case 'BINARY': {
-            return () => binaryComp[node.bin](node.l, node.r);
+        case 'AND':
+        /* fall-through */
+        case 'OR': {
+            let func: Function;
+            let params = new Array<string>();
+
+            const left = create(node.l);
+            const right = create(node.r);
+            const leftParamsLength = left.params.length;
+            const rightParamsLength = right.params.length;
+
+            func = params => {
+                const leftValue = left.func(params.slice(0, leftParamsLength));
+                const rightValue = right.func(
+                    params.slice(
+                        leftParamsLength,
+                        leftParamsLength + rightParamsLength
+                    )
+                );
+                return andOrOp[node._type](leftValue, rightValue);
+            };
+
+            params.push(...left.params);
+            params.push(...right.params);
+            return {
+                func,
+                params
+            };
         }
-        default: {
-            return () => {};
+        case 'BINARY': {
+            let func: Function;
+            let params = new Array<string>();
+            const { bin, l, r } = node;
+            const isFstObj = typeof l === 'object';
+            const isSndObj = typeof r === 'object';
+            if (isFstObj && isSndObj) {
+                func = ([p0, p1]) => binaryComp[bin](p0, p1);
+                params.push((l as PropertyValueNode).p);
+                params.push((r as PropertyValueNode).p);
+            } else if (isFstObj) {
+                func = ([p0]) => binaryComp[bin](p0, r);
+                params.push((l as PropertyValueNode).p);
+            } else if (isSndObj) {
+                func = ([p0]) => binaryComp[bin](l, p0);
+                params.push((r as PropertyValueNode).p);
+            } else {
+                func = () => binaryComp[bin](l, r);
+            }
+            return {
+                func,
+                params
+            };
         }
     }
 };
+
