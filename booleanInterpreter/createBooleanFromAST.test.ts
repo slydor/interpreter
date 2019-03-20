@@ -1,5 +1,6 @@
 import { createBooleanFromAST } from './createBooleanFromAST';
 import { example1 } from './ASTData';
+import { parseBoolean } from '../parser/parseBoolean';
 
 describe('createBooleanFromAST', () => {
     test('expect binary node with boolean values to create correct function and no parameter', () => {
@@ -9,7 +10,7 @@ describe('createBooleanFromAST', () => {
             l: true,
             r: false
         });
-        expect(bools.func()).toBe(true);
+        expect(bools.func([])).toBe(true);
         expect(bools.params).toHaveLength(0);
     });
     test('expect binary node with int values to create correct function and no parameter', () => {
@@ -19,7 +20,7 @@ describe('createBooleanFromAST', () => {
             l: 1,
             r: 2
         });
-        expect(ints.func()).toBe(false);
+        expect(ints.func([])).toBe(false);
         expect(ints.params).toHaveLength(0);
     });
     test('expect binary node with string values to create correct function and no parameter', () => {
@@ -29,7 +30,7 @@ describe('createBooleanFromAST', () => {
             l: 'foo',
             r: 'bar'
         });
-        expect(strings.func()).toBe(true);
+        expect(strings.func([])).toBe(true);
         expect(strings.params).toHaveLength(0);
     });
 
@@ -80,5 +81,23 @@ describe('createBooleanFromAST', () => {
         expect(params[1]).toBe('Name');
         expect(params[2]).toBe('Id');
         expect(params[3]).toBe('Name');
+    });
+
+    test('expect integration with parser to result in correct function with parameters', () => {
+        const { func, params } = createBooleanFromAST(
+            parseBoolean(
+                'main.Status != 2 and main.Status != 3 or main.Name == "batman"'
+            )
+        );
+        // the and-group should compute to true
+        expect(func([1, 1, 'foobar'])).toBe(true);
+        // the rightmost binary shpuld compute to true
+        expect(func([2, 3, 'batman'])).toBe(true);
+        expect(func([2, 3, 'foobar'])).toBe(false);
+
+        expect(params).toHaveLength(3);
+        expect(params[0]).toBe('Status');
+        expect(params[1]).toBe('Status');
+        expect(params[2]).toBe('Name');
     });
 });
