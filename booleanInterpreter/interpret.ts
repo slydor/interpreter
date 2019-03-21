@@ -1,6 +1,6 @@
 import { parseBoolean } from '../parser/parseBoolean';
 import { createBooleanFromAST } from './createBooleanFromAST';
-import { propertyValues } from '../propertyValues';
+import { getPropertyValues } from '../propertyValues';
 
 export const interpret = (text: string): boolean => {
     const ast = parseBoolean(text);
@@ -12,7 +12,7 @@ export const interpret = (text: string): boolean => {
     const { func, params } = createBooleanFromAST(ast);
     // simulate property value lookups:
     const callParams = params.map(
-        (paramName: string) => propertyValues[paramName]
+        (paramName: string) => getPropertyValues()[paramName]
     );
     return func(callParams);
 };

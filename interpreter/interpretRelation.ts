@@ -1,13 +1,13 @@
 import { Statement } from './Interpreter';
 import { interpretBinaryRelation } from './interpretBinaryRelation';
-import { propertyValues } from '../propertyValues';
+import { getPropertyValues } from '../propertyValues';
 
 export const interpretRelation = (statement: Statement) => {
     switch (statement.arity) {
         case 'binary': {
             return interpretBinaryRelation(
                 statement.rel,
-                propertyValues[statement.prop],
+                getPropertyValues()[statement.prop],
                 statement.value
             );
         }
