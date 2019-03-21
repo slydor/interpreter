@@ -22,7 +22,7 @@ export type OrNode = ASTNodeBase & {
     r: ASTNode;
 };
 
-export type BinaryType = '==' | '!=';
+export type BinaryType = '==' | '!=' | '<' | '<=' | '>' | '>=';
 
 export type ExpressionValue = string | number | boolean | PropertyValueNode;
 
