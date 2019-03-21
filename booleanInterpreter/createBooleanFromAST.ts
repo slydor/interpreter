@@ -22,7 +22,11 @@ const andOrOp = {
 };
 const binaryComp = {
     '==': (l: ExpressionValue, r: ExpressionValue) => l === r,
-    '!=': (l: ExpressionValue, r: ExpressionValue) => l !== r
+    '!=': (l: ExpressionValue, r: ExpressionValue) => l !== r,
+    '<': (l: ExpressionValue, r: ExpressionValue) => l < r,
+    '<=': (l: ExpressionValue, r: ExpressionValue) => l <= r,
+    '>': (l: ExpressionValue, r: ExpressionValue) => l > r,
+    '>=': (l: ExpressionValue, r: ExpressionValue) => l >= r
 };
 
 const create = (node: ASTNode): Interpreter => {

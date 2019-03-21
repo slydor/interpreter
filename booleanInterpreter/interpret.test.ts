@@ -32,16 +32,71 @@ describe('boolean interpreter > mock Status as 7, Id as "mockId" and Ready as tr
     });
 
     test('expect to compare Status with OR-groups correctly', () => {
-        expect(interpret('main.Status == 7 or main.Status == 2 or main.Status == 3')).toBe(true);
-        expect(interpret('main.Status == 1 or main.Status == 7 or main.Status == 3')).toBe(true);
-        expect(interpret('main.Status == 1 or main.Status == 2 or main.Status == 7')).toBe(true);
-        expect(interpret('main.Status == 1 or main.Status == 2 or main.Status == 3')).toBe(false);
+        expect(
+            interpret(
+                'main.Status == 7 or main.Status == 2 or main.Status == 3'
+            )
+        ).toBe(true);
+        expect(
+            interpret(
+                'main.Status == 1 or main.Status == 7 or main.Status == 3'
+            )
+        ).toBe(true);
+        expect(
+            interpret(
+                'main.Status == 1 or main.Status == 2 or main.Status == 7'
+            )
+        ).toBe(true);
+        expect(
+            interpret(
+                'main.Status == 1 or main.Status == 2 or main.Status == 3'
+            )
+        ).toBe(false);
     });
 
-    test('expect to compare Status with OR-groups correctly', () => {
-        expect(interpret('main.Status == 7 or main.Status == 2 or main.Status == 3')).toBe(true);
-        expect(interpret('main.Status == 1 or main.Status == 7 or main.Status == 3')).toBe(true);
-        expect(interpret('main.Status == 1 or main.Status == 2 or main.Status == 7')).toBe(true);
-        expect(interpret('main.Status == 1 or main.Status == 2 or main.Status == 3')).toBe(false);
+    test('expect to compare Ready with AND-groups correctly', () => {
+        expect(
+            interpret(
+                'main.Ready == true and main.Ready != 1 and 2 != main.Ready'
+            )
+        ).toBe(true);
+        expect(
+            interpret(
+                'main.Ready == false and main.Ready != 1 and 2 != main.Ready'
+            )
+        ).toBe(false);
+        expect(
+            interpret(
+                'main.Ready == true and main.Ready == 1 and 2 != main.Ready'
+            )
+        ).toBe(false);
+        expect(
+            interpret(
+                'main.Ready == true and main.Ready != 1 and 2 == main.Ready'
+            )
+        ).toBe(false);
+    });
+
+    test('expect to compare Id with brackets', () => {
+        expect(
+            interpret(
+                '("mockId" == main.Id or main.Id == "bar") or main.Id == "foo"'
+            )
+        ).toBe(true);
+        expect(
+            interpret(
+                '("foo" == main.Id or main.Id == "mockId") or main.Id == "bar"'
+            )
+        ).toBe(true);
+        expect(
+            interpret(
+                '("foo" == main.Id or main.Id == "bar") and main.Id == main.Id'
+            )
+        ).toBe(false);
+        expect(
+            interpret(
+                '("foo" == main.Id or main.Id == "bar") or main.Id == main.Id'
+            )
+        ).toBe(true);
     });
 });

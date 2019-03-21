@@ -21,6 +21,10 @@ BinaryExp      -> ExpValue _ BinaryRel _ ExpValue  {% ([l, w0, bin, w1, r]) => (
 
 BinaryRel      -> "=="                             {% id %}
                 | "!="                             {% id %}
+                | "<"                              {% id %}
+                | "<="                             {% id %}
+                | ">"                              {% id %}
+                | ">="                             {% id %}
 
 ExpValue       -> PropertyValue                    {% id %}
                 | dqstring                         {% id %}
