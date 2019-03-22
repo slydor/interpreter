@@ -13,6 +13,16 @@ describe('createBooleanFromAST', () => {
         expect(bools.func([])).toBe(true);
         expect(bools.params).toHaveLength(0);
     });
+    test('expect binary node with null values to create correct function and no parameter', () => {
+        const bools = createBooleanFromAST({
+            _type: 'BINARY',
+            bin: '==',
+            l: null,
+            r: null
+        });
+        expect(bools.func([])).toBe(true);
+        expect(bools.params).toHaveLength(0);
+    });
     test('expect binary node with int values to create correct function and no parameter', () => {
         const ints = createBooleanFromAST({
             _type: 'BINARY',
@@ -91,7 +101,7 @@ describe('createBooleanFromAST', () => {
         );
         // the and-group should compute to true
         expect(func([1, 1, 'foobar'])).toBe(true);
-        // the rightmost binary shpuld compute to true
+        // the rightmost binary should compute to true
         expect(func([2, 3, 'batman'])).toBe(true);
         expect(func([2, 3, 'foobar'])).toBe(false);
 

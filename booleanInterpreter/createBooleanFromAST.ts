@@ -64,8 +64,8 @@ const create = (node: ASTNode): Interpreter => {
             let func: (params: any[]) => boolean;
             let params = new Array<string>();
             const { bin, l, r } = node;
-            const isFstObj = typeof l === 'object';
-            const isSndObj = typeof r === 'object';
+            const isFstObj = typeof l === 'object' && l !== null;
+            const isSndObj = typeof r === 'object' && r !== null;
             if (isFstObj && isSndObj) {
                 func = ([p0, p1]) => binaryComp[bin](p0, p1);
                 params.push((l as PropertyValueNode).p);
