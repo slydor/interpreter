@@ -172,4 +172,137 @@ describe('parseBoolean: arbitrary nested statement comparison', () => {
             }
         });
     });
+
+    test('expect different binary comparisons combined works', () => {
+        expect(
+            parseBoolean(
+                '1 < 2 or 3 <= 4 or 5 > 6 or 7 >= 8 or 9 == 0 or 10 != 11'
+            )
+        ).toEqual({
+            _type: 'OR',
+            l: {
+                _type: 'OR',
+                l: {
+                    _type: 'OR',
+                    l: {
+                        _type: 'OR',
+                        l: {
+                            _type: 'OR',
+                            l: {
+                                _type: 'BINARY',
+                                bin: '<',
+                                l: 1,
+                                r: 2
+                            },
+                            r: {
+                                _type: 'BINARY',
+                                bin: '<=',
+                                l: 3,
+                                r: 4
+                            }
+                        },
+                        r: {
+                            _type: 'BINARY',
+                            bin: '>',
+                            l: 5,
+                            r: 6
+                        }
+                    },
+                    r: {
+                        _type: 'BINARY',
+                        bin: '>=',
+                        l: 7,
+                        r: 8
+                    }
+                },
+                r: {
+                    _type: 'BINARY',
+                    bin: '==',
+                    l: 9,
+                    r: 0
+                }
+            },
+            r: {
+                _type: 'BINARY',
+                bin: '!=',
+                l: 10,
+                r: 11
+            }
+        });
+    });
+
+    test('expect AND keyword to be case insensitive', () => {
+        const expected = {
+            _type: 'AND',
+            l: {
+                _type: 'BINARY',
+                bin: '==',
+                l: 0,
+                r: 0
+            },
+            r: {
+                _type: 'BINARY',
+                bin: '==',
+                l: 0,
+                r: 0
+            }
+        };
+        expect(parseBoolean('0==0 and 0==0')).toEqual(expected);
+        expect(parseBoolean('0==0 And 0==0')).toEqual(expected);
+        expect(parseBoolean('0==0 AND 0==0')).toEqual(expected);
+    });
+
+    test('expect OR keyword to be case insensitive', () => {
+        const expected = {
+            _type: 'OR',
+            l: {
+                _type: 'BINARY',
+                bin: '==',
+                l: 0,
+                r: 0
+            },
+            r: {
+                _type: 'BINARY',
+                bin: '==',
+                l: 0,
+                r: 0
+            }
+        };
+        expect(parseBoolean('0==0 or 0==0')).toEqual(expected);
+        expect(parseBoolean('0==0 Or 0==0')).toEqual(expected);
+        expect(parseBoolean('0==0 OR 0==0')).toEqual(expected);
+    });
+
+    test('expect boolean value true be written in lower case, pascal case or upper case', () => {
+        const expected = {
+            _type: 'BINARY',
+            bin: '==',
+            l: true,
+            r: true
+        };
+        expect(parseBoolean('true == true')).toEqual(expected);
+        expect(parseBoolean('True == True')).toEqual(expected);
+        expect(parseBoolean('TRUE == TRUE')).toEqual(expected);
+    });
+
+    test('expect boolean value false be written in lower case, pascal case or upper case', () => {
+        const expected = {
+            _type: 'BINARY',
+            bin: '==',
+            l: false,
+            r: false
+        };
+        expect(parseBoolean('false == false')).toEqual(expected);
+        expect(parseBoolean('False == False')).toEqual(expected);
+        expect(parseBoolean('FALSE == FALSE')).toEqual(expected);
+    });
+
+    test('expect negative integer to be parsed', () => {
+        expect(parseBoolean('-1 < 0')).toEqual({
+            _type: 'BINARY',
+            bin: '<',
+            l: -1,
+            r: 0
+        });
+    });
 });
