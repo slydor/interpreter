@@ -13,42 +13,49 @@ const lexer = moo.compile({
     _br0:       /==|!=/,
     _br1:       /<=|<|>=|>/,
     _main :    'main.',
-    _t:        { match: /true|True|TRUE/, value: () => true },
-    _f:        { match: /false|False|FALSE/, value: () => false },
+    _true:     { match: /true|True|TRUE/, value: () => true },
+    _false:    { match: /false|False|FALSE/, value: () => false },
+    _null:     { match: /null|Null|NULL/, value: () => null },
     _property: /[a-zA-Z][a-zA-Z0-9]*/,
 });
 %}
 @lexer lexer
 @{% const mooId = (d) => d[0].value; %}
 
-BooleanExp     -> Or                                 {% id %}
+BooleanExp     -> Or                                       {% id %}
 
-Or             -> Or %_ws %_or %_ws And              {% ([l, w0, or, w1, r]) => ({_type: 'OR', l, r}) %}
-                | And                                {% id %}
+Or             -> Or %_ws %_or %_ws And                    {% ([l, w0, or, w1, r]) => ({_type: 'OR', l, r}) %}
+                | And                                      {% id %}
 
-And            -> And %_ws %_and %_ws StatementAtom  {% ([l, w0, or, w1, r]) => ({_type: 'AND', l, r}) %}
-                | StatementAtom                      {% id %}
+And            -> And %_ws %_and %_ws StatementAtom        {% ([l, w0, or, w1, r]) => ({_type: 'AND', l, r}) %}
+                | StatementAtom                            {% id %}
 
-StatementAtom  -> BinaryExp                          {% id %}
-                | Brackets                           {% id %}
+StatementAtom  -> BinaryExp                                {% id %}
+                | Brackets                                 {% id %}
 
 
-Brackets       -> %_lparen WS BooleanExp WS %_rparen {% ([b0, w0, e, w1, b1]) => e %}
+Brackets       -> %_lparen WS BooleanExp WS %_rparen       {% ([b0, w0, e, w1, b1]) => e %}
 
-BinaryExp      -> ExpValue WS BinaryRel WS ExpValue  {% ([l, w0, bin, w1, r]) => ({_type: 'BINARY', bin, l, r}) %}
+BinaryExp      -> ExpValNull WS BinaryRelEq WS ExpValNull  {% ([l, w0, bin, w1, r]) => ({_type: 'BINARY', bin, l, r}) %}
+                | ExpValue WS BinaryRel WS ExpValue        {% ([l, w0, bin, w1, r]) => ({_type: 'BINARY', bin, l, r}) %}
 
-BinaryRel      -> %_br0                              {% mooId %}
-                | %_br1                              {% mooId %}
+BinaryRelEq    -> %_br0                                    {% mooId %}
 
-ExpValue       -> PropertyValue                      {% id %}
-                | %_string                           {% mooId %}
-                | %_int                              {% mooId %}
-                | %_t                                {% mooId %}
-                | %_f                                {% mooId %}
+BinaryRel      -> BinaryRelEq                              {% id %}
+                | %_br1                                    {% mooId %}
 
-PropertyValue  -> %_main Property                    {% ([main, p]) => ({_type: 'PROPERTY_VALUE', p}) %}
+ExpValNull     -> ExpValue                                 {% id %}
+                | %_null                                   {% mooId %}
 
-Property       -> %_property                         {% mooId %}
+ExpValue       -> PropertyValue                            {% id %}
+                | %_string                                 {% mooId %}
+                | %_int                                    {% mooId %}
+                | %_true                                   {% mooId %}
+                | %_false                                  {% mooId %}
+
+PropertyValue  -> %_main Property                          {% ([main, p]) => ({_type: 'PROPERTY_VALUE', p}) %}
+
+Property       -> %_property                               {% mooId %}
 
 WS             -> null
                 | %_ws

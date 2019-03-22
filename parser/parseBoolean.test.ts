@@ -273,7 +273,7 @@ describe('parseBoolean: arbitrary nested statement comparison', () => {
         expect(parseBoolean('0==0 OR 0==0')).toEqual(expected);
     });
 
-    test('expect boolean value true be written in lower case, pascal case or upper case', () => {
+    test('expect boolean value true to be written in lower case, pascal case or upper case', () => {
         const expected = {
             _type: 'BINARY',
             bin: '==',
@@ -285,7 +285,7 @@ describe('parseBoolean: arbitrary nested statement comparison', () => {
         expect(parseBoolean('TRUE == TRUE')).toEqual(expected);
     });
 
-    test('expect boolean value false be written in lower case, pascal case or upper case', () => {
+    test('expect boolean value false to be written in lower case, pascal case or upper case', () => {
         const expected = {
             _type: 'BINARY',
             bin: '==',
@@ -304,5 +304,51 @@ describe('parseBoolean: arbitrary nested statement comparison', () => {
             l: -1,
             r: 0
         });
+    });
+
+    test('expect null to be parsed with ==', () => {
+        expect(parseBoolean('null == 0')).toEqual({
+            _type: 'BINARY',
+            bin: '==',
+            l: null,
+            r: 0
+        });
+    });
+
+    test('expect null to be parsed with !=', () => {
+        expect(parseBoolean('null != 0')).toEqual({
+            _type: 'BINARY',
+            bin: '!=',
+            l: null,
+            r: 0
+        });
+    });
+
+    test('expect null not to be parsable with <', () => {
+        expect(parseBoolean('null < 0')).toEqual(undefined);
+    });
+
+    test('expect null not to be parsable with <=', () => {
+        expect(parseBoolean('null <= 0')).toEqual(undefined);
+    });
+
+    test('expect null not to be parsable with >', () => {
+        expect(parseBoolean('null > 0')).toEqual(undefined);
+    });
+
+    test('expect null not to be parsable with >=', () => {
+        expect(parseBoolean('null >= 0')).toEqual(undefined);
+    });
+
+    test('expect null value to be written in lower case, pascal case or upper case', () => {
+        const expected = {
+            _type: 'BINARY',
+            bin: '==',
+            l: null,
+            r: null
+        };
+        expect(parseBoolean('null == null')).toEqual(expected);
+        expect(parseBoolean('Null == Null')).toEqual(expected);
+        expect(parseBoolean('NULL == NULL')).toEqual(expected);
     });
 });
