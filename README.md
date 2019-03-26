@@ -17,6 +17,5 @@
 * CONTAINS: ~ for string props (substrings)
 * handle date props (compare them to fixed values and function results, like now, startOfWeek,...)
 * case-insensitive string equality **_=**
-* 
 
-* draw inspiration from https://docs.atlassian.com/advanced-searching https://confluence.atlassian.com/jirasoftwareserver/advanced-searching-939938733.html#Advancedsearching-ISIS
+* draw inspiration from https://docs.atlassian.com/advanced-searching https://confluence.atlassian.com/jirasoftwareserver/advanced-searching-939938733.html https://ruslanspivak.com/lsbasi-part7/
