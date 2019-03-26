@@ -32,6 +32,7 @@
     },
     "scripts": {
         "benchmark": "tsc && node ./dist/benchmark/parseBoolean.js",
+        "compile-demo": "nearleyc ./grammar/demo.ne -o ./grammar/demo.js",
         "compile": "nearleyc ./grammar/rule.ne -o ./grammar/rule.ts",
         "compile2": "nearleyc ./grammar/brackets.ne -o ./grammar/brackets.js",
         "compile3": "nearleyc ./grammar/boolean.ne -o ./grammar/boolean.js"
