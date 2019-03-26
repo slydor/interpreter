@@ -1,37 +1,61 @@
 # @preprocessor typescript # ts doesn't work with nearley-test
-@builtin "whitespace.ne"
-@builtin "number.ne"     # `int`, `decimal`, and `percentage` number primitives
-@builtin "string.ne"     # `dqstring`, `sqstring`
+
+@{%
+const moo = require('moo');
+const lexer = moo.compile({
+    _ws:       /[ \t]+/,
+    _int:      { match: /0|-?[1-9][0-9]*/, value: n => parseInt(n) },
+    _string:   { match: /"(?:\\["\\]|[^\n"\\])*"/, value: s => s.slice(1, -1) },
+    _lparen:   '(',
+    _rparen:   ')',
+    _or:       /[oO][rR]/,
+    _and:      /[aA][nN][dD]/,
+    _br0:       /==|!=/,
+    _br1:       /<=|<|>=|>/,
+    _main :    'main.',
+    _true:     { match: /true|True|TRUE/, value: () => true },
+    _false:    { match: /false|False|FALSE/, value: () => false },
+    _null:     { match: /null|Null|NULL/, value: () => null },
+    _property: /[a-zA-Z][a-zA-Z0-9]*/,
+});
+%}
+@lexer lexer
+@{% const mooId = (d) => d[0].value; %}
+
+BooleanExp     -> Or                                       {% id %}
+
+Or             -> Or %_ws %_or %_ws And                    {% ([l, w0, or, w1, r]) => ({_type: 'OR', l, r}) %}
+                | And                                      {% id %}
+
+And            -> And %_ws %_and %_ws StatementAtom        {% ([l, w0, or, w1, r]) => ({_type: 'AND', l, r}) %}
+                | StatementAtom                            {% id %}
+
+StatementAtom  -> BinaryExp                                {% id %}
+                | Brackets                                 {% id %}
 
 
-BooleanExp     -> Or                               {% id %}
+Brackets       -> %_lparen WS BooleanExp WS %_rparen       {% ([b0, w0, e, w1, b1]) => e %}
 
-Or             -> Or __ "or" __ And                {% ([l, w0, or, w1, r]) => ({_type: 'OR', l, r}) %}
-                | And                              {% id %}
+BinaryExp      -> ExpValNull WS BinaryRelEq WS ExpValNull  {% ([l, w0, bin, w1, r]) => ({_type: 'BINARY', bin, l, r}) %}
+                | ExpValue WS BinaryRel WS ExpValue        {% ([l, w0, bin, w1, r]) => ({_type: 'BINARY', bin, l, r}) %}
 
-And            -> And __ "and" __ StatementAtom    {% ([l, w0, or, w1, r]) => ({_type: 'AND', l, r}) %}
-                | StatementAtom                    {% id %}
+BinaryRelEq    -> %_br0                                    {% mooId %}
 
-StatementAtom  -> BinaryExp                        {% id %}
-                | Brackets                         {% id %}
+BinaryRel      -> BinaryRelEq                              {% id %}
+                | %_br1                                    {% mooId %}
 
-Brackets       -> "(" _ BooleanExp _ ")"           {% ([b0, w0, e, w1, b1]) => e %}
+ExpValNull     -> ExpValue                                 {% id %}
+                | %_null                                   {% mooId %}
 
-BinaryExp      -> ExpValue _ BinaryRel _ ExpValue  {% ([l, w0, bin, w1, r]) => ({_type: 'BINARY', bin, l, r}) %}
+ExpValue       -> PropertyValue                            {% id %}
+                | %_string                                 {% mooId %}
+                | %_int                                    {% mooId %}
+                | %_true                                   {% mooId %}
+                | %_false                                  {% mooId %}
 
-BinaryRel      -> "=="                             {% id %}
-                | "!="                             {% id %}
-                | "<"                              {% id %}
-                | "<="                             {% id %}
-                | ">"                              {% id %}
-                | ">="                             {% id %}
+PropertyValue  -> %_main Property                          {% ([main, p]) => ({_type: 'PROPERTY_VALUE', p}) %}
 
-ExpValue       -> PropertyValue                    {% id %}
-                | dqstring                         {% id %}
-                | int                              {% id %}
-                | "true"                           {% (d) => true %}
-                | "false"                          {% (d) => false %}
+Property       -> %_property                               {% mooId %}
 
-PropertyValue  -> "main." Property                 {% ([main, p]) => ({_type: 'PROPERTY_VALUE', p}) %}
-
-Property       -> [a-zA-Z] [a-zA-Z0-9]:*           {% ([first, rest]) => first + rest.join('') %}
+WS             -> null
+                | %_ws

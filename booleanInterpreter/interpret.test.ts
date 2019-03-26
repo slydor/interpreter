@@ -22,6 +22,28 @@ describe('boolean interpreter > mock Name as "batman"', () => {
     });
 });
 
+describe('boolean interpreter > mock Batman as null, Name as "batman"', () => {
+    beforeEach(() => {
+        require('../propertyValues').getPropertyValues = () => ({
+            Batman: null,
+            Name: 'batman'
+        });
+    });
+
+    test('expect Batman == null to be true', () => {
+        expect(interpret('main.Batman == null')).toBe(true);
+    });
+    test('expect Batman != null to be false', () => {
+        expect(interpret('main.Batman != null')).toBe(false);
+    });
+    test('expect Name == null to be false', () => {
+        expect(interpret('main.Name == null')).toBe(false);
+    });
+    test('expect Name != null to be true', () => {
+        expect(interpret('main.Name != null')).toBe(true);
+    });
+});
+
 describe('boolean interpreter > mock Status as 7, Id as "mockId" and Ready as true', () => {
     beforeEach(() => {
         require('../propertyValues').getPropertyValues = () => ({

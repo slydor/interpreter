@@ -24,7 +24,7 @@ export type OrNode = ASTNodeBase & {
 
 export type BinaryType = '==' | '!=' | '<' | '<=' | '>' | '>=';
 
-export type ExpressionValue = string | number | boolean | PropertyValueNode;
+export type ExpressionValue = string | number | boolean | null | PropertyValueNode;
 
 export type BinaryNode = ASTNodeBase & {
     _type: 'BINARY';
