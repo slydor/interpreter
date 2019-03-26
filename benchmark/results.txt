@@ -1,0 +1,25 @@
+--nearley only--
+$ tsc && node ./dist/benchmark/parseBoolean.js
+Start benchmark with 100000 loops for input
+[main.Status==6]
+Execution time: 6s 182.216955ms
+Start benchmark with 100000 loops for input
+[ main.Status  ==  6 and (main.Status  ==  6 or main.Status  ==  6)]
+Execution time: 4s 657.07288ms
+Start benchmark with 100000 loops for input
+[(1==2 and ( (  main.Ready == true   or "foo"==  main.Name ) or main.Id   !=main.Name  )   ) and ("bar"!=3  or   4==false)]
+Execution time: 32s 788.644114ms
+Done in 48.77s.
+
+-- with moo lexer --
+$ tsc && node ./dist/benchmark/parseBoolean.js
+Start benchmark with 100000 loops for input
+[main.Status==6]
+Execution time: 1s 624.378767ms
+Start benchmark with 100000 loops for input
+[ main.Status  ==  6 and (main.Status  ==  6 or main.Status  ==  6)]
+Execution time: 3s 124.943654ms
+Start benchmark with 100000 loops for input
+[(1==2 and ( (  main.Ready == true   or "foo"==  main.Name ) or main.Id   !=main.Name  )   ) and ("bar"!=3  or   4==false)]
+Execution time: 23s 231.389698ms
+Done in 33.17s.
