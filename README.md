@@ -6,6 +6,7 @@
 * support nesting with **AND**, **OR** and brackets
 
 # Further ideas
+* rename *params* to *identifier* in createInterpreterFromAST
 ## syntactic sugar
 * support **IN**: *"status IN ("To Do", "In Progress", "Closed")"*
 --> *status == "To Do" or status == "In Progress" or status == "Closed"*
