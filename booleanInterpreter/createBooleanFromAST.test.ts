@@ -84,6 +84,38 @@ describe('createBooleanFromAST', () => {
         expect(equalsThirteen.params[1]).toBe('Comment');
     });
 
+    test('expect falsy check node to create correct function and paramter', () => {
+        const propIsNull = createBooleanFromAST({
+            _type: 'FALSY_CHECK',
+            v: { _type: 'PROPERTY_VALUE', p: 'Prop' }
+        });
+        expect(propIsNull.func(['foobar'])).toBe(false);
+        expect(propIsNull.func([13])).toBe(false);
+        expect(propIsNull.func([true])).toBe(false);
+        expect(propIsNull.func([null])).toBe(true);
+        expect(propIsNull.func([''])).toBe(true);
+        expect(propIsNull.func([0])).toBe(true);
+        expect(propIsNull.func([false])).toBe(true);
+        expect(propIsNull.params).toHaveLength(1);
+        expect(propIsNull.params[0]).toBe('Prop');
+    });
+
+    test('expect truthy check node to create correct function and paramter', () => {
+        const propIsNotNull = createBooleanFromAST({
+            _type: 'TRUTHY_CHECK',
+            v: { _type: 'PROPERTY_VALUE', p: 'Prop' }
+        });
+        expect(propIsNotNull.func(['foobar'])).toBe(true);
+        expect(propIsNotNull.func([13])).toBe(true);
+        expect(propIsNotNull.func([true])).toBe(true);
+        expect(propIsNotNull.func([null])).toBe(false);
+        expect(propIsNotNull.func([''])).toBe(false);
+        expect(propIsNotNull.func([0])).toBe(false);
+        expect(propIsNotNull.func([false])).toBe(false);
+        expect(propIsNotNull.params).toHaveLength(1);
+        expect(propIsNotNull.params[0]).toBe('Prop');
+    });
+
     test('expect correct parameter list for extended nested nodes', () => {
         const { params } = createBooleanFromAST(example1);
         expect(params).toHaveLength(4);
@@ -96,18 +128,18 @@ describe('createBooleanFromAST', () => {
     test('expect integration with parser to result in correct function with parameters', () => {
         const { func, params } = createBooleanFromAST(
             parseBoolean(
-                'main.Status != 2 and main.Status != 3 or main.Name == "batman"'
+                'main.Status != 2 and main.Id is not null or main.Name == "batman"'
             )
         );
         // the and-group should compute to true
-        expect(func([1, 1, 'foobar'])).toBe(true);
+        expect(func([1, 'notNullId', 'foobar'])).toBe(true);
         // the rightmost binary should compute to true
-        expect(func([2, 3, 'batman'])).toBe(true);
-        expect(func([2, 3, 'foobar'])).toBe(false);
+        expect(func([2, null, 'batman'])).toBe(true);
+        expect(func([2, 0, 'foobar'])).toBe(false);
 
         expect(params).toHaveLength(3);
         expect(params[0]).toBe('Status');
-        expect(params[1]).toBe('Status');
+        expect(params[1]).toBe('Id');
         expect(params[2]).toBe('Name');
     });
 });

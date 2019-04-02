@@ -50,6 +50,90 @@ describe('parseBoolean: arbitrary nested statement comparison', () => {
         });
     });
 
+    test('expect undefined for keyword IS without NULL', () => {
+        expect(parseBoolean('main.Name IS')).toBe(undefined);
+    });
+    test('expect undefined for keyword NULL without IS', () => {
+        expect(parseBoolean('main.Name NULL')).toBe(undefined);
+    });
+    test('expect undefined for keyword NOT without IS or NULL', () => {
+        expect(parseBoolean('main.Name NOT')).toBe(undefined);
+    });
+    test('expect undefined for keywords IS+NOT without NULL', () => {
+        expect(parseBoolean('main.Name IS NOT')).toBe(undefined);
+    });
+    test('expect undefined for keywords NOT+NUL without IS', () => {
+        expect(parseBoolean('main.Name NOT NULL')).toBe(undefined);
+    });
+    test('expect undefined for keywords IS+NULL in wrong order', () => {
+        expect(parseBoolean('IS main.Name NULL')).toBe(undefined);
+        expect(parseBoolean('IS NULL main.Name')).toBe(undefined);
+        expect(parseBoolean('main.Name NULL IS')).toBe(undefined);
+        expect(parseBoolean('NULL main.Name IS')).toBe(undefined);
+    });
+    test('expect undefined for keywords IS+NOT+NULL in wrong order', () => {
+        expect(parseBoolean('main.Name NOT IS NULL')).toBe(undefined);
+        expect(parseBoolean('main.Name NULL IS NOT')).toBe(undefined);
+        expect(parseBoolean('main.Name IS NULL NOT')).toBe(undefined);
+    });
+
+    test('expect keywords "is null" to create falsy check node', () => {
+        expect(parseBoolean('main.Name is null')).toEqual({
+            _type: 'FALSY_CHECK',
+            v: {
+                _type: 'PROPERTY_VALUE',
+                p: 'Name'
+            }
+        });
+    });
+    test('expect keywords "Is Null" in pascal case to create falsy check node', () => {
+        expect(parseBoolean('main.Name Is Null')).toEqual({
+            _type: 'FALSY_CHECK',
+            v: {
+                _type: 'PROPERTY_VALUE',
+                p: 'Name'
+            }
+        });
+    });
+    test('expect keywords "IS NULL" in upper case to create falsy check node', () => {
+        expect(parseBoolean('main.Name IS NULL')).toEqual({
+            _type: 'FALSY_CHECK',
+            v: {
+                _type: 'PROPERTY_VALUE',
+                p: 'Name'
+            }
+        });
+    });
+
+    test('expect keywords "is not null" to create truthy check node', () => {
+        expect(parseBoolean('main.Name is not null')).toEqual({
+            _type: 'TRUTHY_CHECK',
+            v: {
+                _type: 'PROPERTY_VALUE',
+                p: 'Name'
+            }
+        });
+    });
+    test('expect keywords "Is Not Null" in pascal case to create truthy check node', () => {
+        expect(parseBoolean('main.Name Is Not Null')).toEqual({
+            _type: 'TRUTHY_CHECK',
+            v: {
+                _type: 'PROPERTY_VALUE',
+                p: 'Name'
+            }
+        });
+    });
+    test('expect keywords "IS NOT NULL" in upper case to create truthy check node', () => {
+        expect(parseBoolean('main.Name IS NOT NULL')).toEqual({
+            _type: 'TRUTHY_CHECK',
+            v: {
+                _type: 'PROPERTY_VALUE',
+                p: 'Name'
+            }
+        });
+    });
+
+
     test('AND have precedence over OR', () => {
         expect(parseBoolean('1==2 and 3==4 or 5==6')).toEqual({
             _type: 'OR',
