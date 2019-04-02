@@ -60,6 +60,24 @@ const create = (node: ASTNode): Interpreter => {
                 params
             };
         }
+        case 'FALSY_CHECK': {
+            const func = ([p]) =>
+                p === null || p === 0 || p === '' || p === false;
+            const params = [node.v.p];
+            return {
+                func,
+                params
+            };
+        }
+        case 'TRUTHY_CHECK': {
+            const func = ([p]) =>
+                p !== null && p !== 0 && p !== '' && p !== false;
+            const params = [node.v.p];
+            return {
+                func,
+                params
+            };
+        }
         case 'BINARY': {
             let func: (params: any[]) => boolean;
             let params = new Array<string>();
@@ -95,6 +113,11 @@ const visit = (node: ASTNode, visitedProps: Array<string>) => {
             console.log('visit node', node._type);
             visit(node.l, visitedProps);
             visit(node.r, visitedProps);
+            break;
+        case 'TRUTHY_CHECK':
+        case 'FALSY_CHECK':
+            console.log('visit node', node._type);
+            visit(node.v, visitedProps);
             break;
         case 'BINARY':
             console.log(

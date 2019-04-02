@@ -1,10 +1,22 @@
-export type ASTNodeType = 'AND' | 'OR' | 'BINARY' | 'PROPERTY_VALUE';
+export type ASTNodeType =
+    | 'AND'
+    | 'OR'
+    | 'BINARY'
+    | 'TRUTHY_CHECK'
+    | 'FALSY_CHECK'
+    | 'PROPERTY_VALUE';
 
 export type ASTNodeBase = {
     _type: ASTNodeType;
 };
 
-export type ASTNode = AndNode | OrNode | BinaryNode | PropertyValueNode;
+export type ASTNode =
+    | AndNode
+    | OrNode
+    | BinaryNode
+    | TruthyCheckNode
+    | FalsyCheckNode
+    | PropertyValueNode;
 
 export type AndNode = ASTNodeBase & {
     _type: 'AND';
@@ -24,7 +36,12 @@ export type OrNode = ASTNodeBase & {
 
 export type BinaryType = '==' | '!=' | '<' | '<=' | '>' | '>=';
 
-export type ExpressionValue = string | number | boolean | null | PropertyValueNode;
+export type ExpressionValue =
+    | string
+    | number
+    | boolean
+    | null
+    | PropertyValueNode;
 
 export type BinaryNode = ASTNodeBase & {
     _type: 'BINARY';
@@ -40,6 +57,16 @@ export type PropertyValueNode = ASTNodeBase & {
     _type: 'PROPERTY_VALUE';
     /** property name */
     p: string;
+};
+
+export type TruthyCheckNode = ASTNodeBase & {
+    _type: 'TRUTHY_CHECK';
+    v: PropertyValueNode;
+};
+
+export type FalsyCheckNode = ASTNodeBase & {
+    _type: 'FALSY_CHECK';
+    v: PropertyValueNode;
 };
 
 export type InterpretFunction = (params: any[]) => boolean;
