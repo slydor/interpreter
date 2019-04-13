@@ -54,7 +54,7 @@ var grammar = {
     {"name": "PropertyValue", "symbols": [(lexer.has("_main") ? {type: "_main"} : _main), "Property"], "postprocess": ([main, p]) => ({_type: 'PROPERTY_VALUE', p})},
     {"name": "Property", "symbols": [(lexer.has("_property") ? {type: "_property"} : _property)], "postprocess": mooId},
     {"name": "WS", "symbols": []},
-    {"name": "WS", "symbols": [(lexer.has("_ws") ? {type: "_ws"} : _ws)]}
+    {"name": "WS", "symbols": [(lexer.has("_ws") ? {type: "_ws"} : _ws)], "postprocess": () => null}
 ]
   , ParserStart: "BooleanExp"
 }

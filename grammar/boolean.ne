@@ -63,4 +63,4 @@ PropertyValue  -> %_main Property                                 {% ([main, p])
 Property       -> %_property                                      {% mooId %}
 
 WS             -> null
-                | %_ws
+                | %_ws                                            {% () => null %}

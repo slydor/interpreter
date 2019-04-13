@@ -19,3 +19,4 @@
 * case-insensitive string equality **_=**
 
 * draw inspiration from https://docs.atlassian.com/advanced-searching https://confluence.atlassian.com/jirasoftwareserver/advanced-searching-939938733.html https://ruslanspivak.com/lsbasi-part7/
+* for GUI do something like this https://jsfiddle.net/cerebral86/g62KP/5/
