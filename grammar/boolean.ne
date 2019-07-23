@@ -8,14 +8,20 @@ const lexer = moo.compile({
     _string:   { match: /"(?:\\["\\]|[^\n"\\])*"/, value: s => s.slice(1, -1) },
     _lparen:   '(',
     _rparen:   ')',
+    _minus:    '-',
+    _dateFunc: /now|today|timediff/,
+    _main :    'main.',
+    _timeW:    'w',
+    _timeD:    'd',
+    _timeH:    'h',
+    _timeM:    'm',
     _is:       /is|Is|IS/,
     _in:       /in|In|IN/,
     _not:      /not|Not|NOT/,
     _or:       /or|Or|OR/,
     _and:      /and|And|AND/,
-    _br0:       /==|!=/,
-    _br1:       /<=|<|>=|>/,
-    _main :    'main.',
+    _br0:      /==|!=/,
+    _br1:      /<=|<|>=|>/,
     _true:     { match: /true|True|TRUE/, value: () => true },
     _false:    { match: /false|False|FALSE/, value: () => false },
     _null:     { match: /null|Null|NULL/, value: () => null },
@@ -49,7 +55,24 @@ BinaryExp      -> ExpValOrNull WS %_br0 WS ExpValOrNull           {% binary %}
 ExpValOrNull   -> ExpValue                                        {% id %}
                 | %_null                                          {% mooId %}
 
+Function       -> DateFunction                                    {% id %}
+
+DateFunction   -> %_dateFunc %_lparen TimeDiffArgs %_rparen       {% ([func, b0, args, b1]) => ({_type: 'DATE_FUNCTION', func: func.value, args}) %}
+
+DateFunctionArgs -> null
+                  | TimeDiffArgs                                  {% id %}
+
+TimeDiffArgs   -> DiffWeek:? DiffDay:? DiffHour:? DiffMinute:? {%
+([week, day, hour, minute]) => ({subtract: (week < 0 || day < 0 || hour < 0 || minute < 0), week: Math.abs(week), day: Math.abs(day), hour: Math.abs(hour), minute: Math.abs(minute)})
+%}
+
+DiffWeek       -> %_int %_timeW                                   {% mooId %}
+DiffDay        -> %_int %_timeD                                   {% mooId %}
+DiffHour       -> %_int %_timeH                                   {% mooId %}
+DiffMinute     -> %_int %_timeM                                   {% mooId %}
+
 ExpValue       -> PropertyValue                                   {% id %}
+                | Function                                        {% id %}
                 | %_string                                        {% mooId %}
                 | %_int                                           {% mooId %}
                 | %_true                                          {% mooId %}

@@ -133,7 +133,6 @@ describe('parseBoolean: arbitrary nested statement comparison', () => {
         });
     });
 
-
     test('AND have precedence over OR', () => {
         expect(parseBoolean('1==2 and 3==4 or 5==6')).toEqual({
             _type: 'OR',
@@ -258,11 +257,7 @@ describe('parseBoolean: arbitrary nested statement comparison', () => {
     });
 
     test('expect different binary comparisons combined works', () => {
-        expect(
-            parseBoolean(
-                '1 < 2 or 3 <= 4 or 5 > 6 or 7 >= 8 or 9 == 0 or 10 != 11'
-            )
-        ).toEqual({
+        expect(parseBoolean('1 < 2 or 3 <= 4 or 5 > 6 or 7 >= 8 or 9 == 0 or 10 != 11')).toEqual({
             _type: 'OR',
             l: {
                 _type: 'OR',
@@ -434,5 +429,25 @@ describe('parseBoolean: arbitrary nested statement comparison', () => {
         expect(parseBoolean('null == null')).toEqual(expected);
         expect(parseBoolean('Null == Null')).toEqual(expected);
         expect(parseBoolean('NULL == NULL')).toEqual(expected);
+    });
+
+    // TODO interprter: expect function today() to be equal to the date part of new Date.now()
+    test('expect today() to be parsed as DATE_FUNCTION node', () => {
+        expect(parseBoolean('today() == "2019-07-23"')).toEqual({
+            _type: 'BINARY',
+            bin: '==',
+            l: {
+                _type: 'DATE_FUNCTION',
+                func: 'today',
+                args: {
+                    subtract: false,
+                    week: 0,
+                    day: 0,
+                    hour: 0,
+                    minute: 0
+                }
+            },
+            r: '2019-07-23'
+        });
     });
 });
