@@ -12,8 +12,10 @@
     },
     "devDependencies": {
         "@types/jest": "^24.0.11",
+        "@types/node": "^12.6.8",
         "jest": "^24.5.0",
         "ts-jest": "^24.0.0",
+        "ts-node": "^8.3.0",
         "typescript": "^3.3.3333"
     },
     "jest": {
@@ -35,6 +37,7 @@
         "compile-demo": "nearleyc ./grammar/demo.ne -o ./grammar/demo.js",
         "compile": "nearleyc ./grammar/rule.ne -o ./grammar/rule.ts",
         "compile2": "nearleyc ./grammar/brackets.ne -o ./grammar/brackets.js",
-        "compile3": "nearleyc ./grammar/boolean.ne -o ./grammar/boolean.js"
+        "compile3": "nearleyc ./grammar/boolean.ne -o ./grammar/boolean.js",
+        "repl:boolean": "ts-node ./tools/booleanREPL.ts"
     }
 }
